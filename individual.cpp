@@ -1,28 +1,33 @@
 #include "individual.h"
+#include <bitset>
 
-#include <string>
+using namespace std;
 
 Individual::Individual()
 {
 }
 
-bool Individual::getGen(int index)
+double Individual::x()
 {
-    return cromosome[index];
+    return decode((chromosome & (bitset<CHROMOSOME_SIZE>) MASK).to_ullong());
 }
 
-void Individual::setGen(int index, bool value)
+double Individual::y()
 {
-    cromosome[index] = value;
+    return decode((chromosome >> CHROMOSOME_SIZE / 2).to_ullong());
 }
 
-string Individual::toString()
+double Individual::decode(unsigned long long value)
 {
-    string s = "";
-    for(int i = 0; i < CROMOSOME_SIZE; ++i)
-        if(cromosome[i])
-            s.append("1");
-        else
-            s.append("0");
-    return s;
+    return LB + (UB - LB) / (double) MASK * value;
+}
+
+double Individual::fitness()
+{
+    return function(x(), y());
+}
+
+double Individual::function(double x, double y)
+{
+    return 4 * x * x - 2.1 * x * x * x * x + 1 / 3 * x * x * x * x * x * x + x * y - 4 * y * y + 4 * y * y * y * y;
 }

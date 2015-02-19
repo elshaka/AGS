@@ -1,20 +1,27 @@
 #ifndef INDIVIDUAL_H
 #define INDIVIDUAL_H
 
-#define CROMOSOME_SIZE 12
+#include <bitset>
+#include <cmath>
 
-#include <string>
+#define UB 10
+#define LB -10
+#define CHROMOSOME_SIZE 12
+#define MASK ((unsigned long long) pow(2, CHROMOSOME_SIZE / 2) - 1)
 
 using namespace std;
 
 class Individual
 {
-    bool cromosome[CROMOSOME_SIZE];
 public:
     Individual();
-    bool getGen(int index);
-    void setGen(int index, bool value);
-    string toString();
+    bitset<CHROMOSOME_SIZE> chromosome;
+    double x();
+    double y();
+    double fitness();
+private:
+    double decode(unsigned long long value);
+    double function(double x, double y);
 };
 
 #endif // INDIVIDUAL_H
