@@ -1,15 +1,18 @@
 #ifndef POPULATION_H
 #define POPULATION_H
 
-#define POPULATION_SIZE 10
-
 #include "individual.h"
+#include <random>
+#include <cmath>
+
+using namespace std;
 
 class Population
 {
-    Individual *individuals[POPULATION_SIZE];
 public:
-    Population();
+    Population(bool initialize = true);
+    Individual individuals[POPULATION_SIZE];
+    Individual getFittest();
 };
 
 #endif // POPULATION_H

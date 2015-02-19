@@ -1,10 +1,19 @@
 #include "individual.h"
-#include <bitset>
-
-using namespace std;
 
 Individual::Individual()
 {
+}
+
+double Individual::function(double x, double y)
+{
+    return 4 * x * x - 2.1 * x * x * x * x + 1 / 3 * x * x * x * x * x * x + x * y - 4 * y * y + 4 * y * y * y * y;
+}
+
+string Individual::toString()
+{
+    ostringstream out;
+    out << "(" << x() << ", " << y() << ")";
+    return out.str();
 }
 
 double Individual::x()
@@ -27,7 +36,3 @@ double Individual::fitness()
     return function(x(), y());
 }
 
-double Individual::function(double x, double y)
-{
-    return 4 * x * x - 2.1 * x * x * x * x + 1 / 3 * x * x * x * x * x * x + x * y - 4 * y * y + 4 * y * y * y * y;
-}

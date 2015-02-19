@@ -9,5 +9,7 @@ SOURCES += main.cpp \
     population.cpp
 
 HEADERS += \
-    individual.h
+    individual.h \
+    parameters.h \
+    population.h
 

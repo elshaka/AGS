@@ -3,11 +3,9 @@
 
 #include <bitset>
 #include <cmath>
-
-#define UB 10
-#define LB -10
-#define CHROMOSOME_SIZE 12
-#define MASK ((unsigned long long) pow(2, CHROMOSOME_SIZE / 2) - 1)
+#include <string>
+#include <sstream>
+#include "parameters.h"
 
 using namespace std;
 
@@ -19,6 +17,7 @@ public:
     double x();
     double y();
     double fitness();
+    string toString();
 private:
     double decode(unsigned long long value);
     double function(double x, double y);
