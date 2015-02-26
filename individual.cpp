@@ -1,12 +1,18 @@
 #include "individual.h"
 
-Individual::Individual()
+Individual::Individual(unsigned long long value)
 {
+    chromosome = value;
 }
 
 double Individual::function(double x, double y)
 {
-    return 4 * x * x - 2.1 * x * x * x * x + 1 / 3 * x * x * x * x * x * x + x * y - 4 * y * y + 4 * y * y * y * y;
+    double x2 = x * x;
+    double x4 = x2 * x2;
+    double x6 = x4 * x2;
+    double y2 = y * y;
+    double y4 = y2 * y2;
+    return 4 * x2 - 2.1 * x4 + x6 / 3 +  x * y - 4 * y2 + 4 * y4;
 }
 
 string Individual::toString()
@@ -18,12 +24,12 @@ string Individual::toString()
 
 double Individual::x()
 {
-    return decode((chromosome & (bitset<CHROMOSOME_SIZE>) MASK).to_ullong());
+    return decode((chromosome >> CHROMOSOME_SIZE / 2).to_ullong());
 }
 
 double Individual::y()
 {
-    return decode((chromosome >> CHROMOSOME_SIZE / 2).to_ullong());
+    return decode((chromosome & (bitset<CHROMOSOME_SIZE>) MASK).to_ullong());
 }
 
 double Individual::decode(unsigned long long value)
@@ -35,4 +41,3 @@ double Individual::fitness()
 {
     return function(x(), y());
 }
-

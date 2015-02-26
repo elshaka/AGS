@@ -1,0 +1,4 @@
+set term png
+set output "performance.png"
+plot "offline.dat" using 1:2 title "Offline", \
+     "online.dat" using 1:2 title "Online"

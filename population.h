@@ -2,17 +2,19 @@
 #define POPULATION_H
 
 #include "individual.h"
-#include <random>
 #include <cmath>
+#include <random>
 
 using namespace std;
 
 class Population
 {
 public:
-    Population(bool initialize = true);
+    Population();
     Individual individuals[POPULATION_SIZE];
     Individual getFittest();
+    string toString();
+    void randomize();
 };
 
 #endif // POPULATION_H

@@ -1,14 +1,15 @@
 #ifndef PARAMETERS_H
 #define PARAMETERS_H
 
-#define UB 10
-#define LB -10
-#define CHROMOSOME_SIZE 64
-#define POPULATION_SIZE 10
-#define CROSS_RATIO 0.75
-#define MUTATION_RATIO 0.001
-#define GENERATIONS 20
+#define LB -5
+#define UB 5
+#define CHROMOSOME_SIZE 48
+#define POPULATION_SIZE 20
+#define CROSSOVER_RATE 0.75
+#define MUTATION_RATE 0.001
+#define GENERATIONS 200
 
 #define MASK ((unsigned long long) pow(2, CHROMOSOME_SIZE / 2) - 1)
+#define SHOW_DELAY 0
 
 #endif // PARAMETERS_H
