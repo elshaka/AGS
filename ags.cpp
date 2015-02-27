@@ -74,7 +74,7 @@ void AGS::evolve(Population &pop, bool show, bool log)
 
     if(show)
     {
-        printw("Presione cualquier tecla para salir");
+        printw("Presione cualquier tecla para salir (Revisar log.txt para historial de resultados)");
         getch();
         endwin();
     }
