@@ -5,7 +5,7 @@
 #include "population.h"
 #include <random>
 #include <ncurses.h>
-#include <unistd.h> // usleep
+#include <unistd.h>
 #include <fstream>
 
 using namespace std;
@@ -22,6 +22,9 @@ private:
     double fitnesses[POPULATION_SIZE];
     double total_fitnesses;
     double min_fitness;
+    double best_fitness;
+    Individual best_individual;
+    int best_g;
     double chiasma;
     double sum_best;
     double sum_pop;

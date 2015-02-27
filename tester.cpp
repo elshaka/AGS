@@ -61,4 +61,16 @@ void Tester::run()
             cout << "I1 & I2: " << i3.chromosome << "\n";
         }
     }
+
+    if(TEST_POPULATION_COPY)
+    {
+        Population original_pop;
+        original_pop.randomize();
+        Population copy_pop(original_pop);
+        copy_pop.individuals[0] = 0;
+        cout << "Población original" << endl;
+        cout << original_pop.toString() << endl;
+        cout << "Población copia (primer individuo fijado a 0" << endl;
+        cout << copy_pop.toString() << endl;
+    }
 }

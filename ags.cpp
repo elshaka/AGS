@@ -15,6 +15,10 @@ AGS::AGS()
 
 void AGS::evolve(Population &pop, bool show, bool log)
 {
+    best_individual = pop.individuals[0];
+    best_fitness = best_individual.fitness();
+    best_g = 1;
+
     if(show)
         initscr();
 
@@ -48,12 +52,21 @@ void AGS::evolve(Population &pop, bool show, bool log)
         int p2_i = select();
 
         // Cruzar
-        if((*crossover_dist)(*random_gen))
+        Population old_population = pop;
+        for(int i = 0; i < POPULATION_SIZE / 2; ++i)
         {
-            Individual child1 = crossover(pop.individuals[p1_i], pop.individuals[p2_i]);
-            Individual child2 = crossover(pop.individuals[p2_i], pop.individuals[p1_i]);
-            pop.individuals[(*population_dist)(*random_gen)] = child1;
-            pop.individuals[(*population_dist)(*random_gen)] = child2;
+            if((*crossover_dist)(*random_gen))
+            {
+                Individual child1 = crossover(old_population.individuals[p1_i], old_population.individuals[p2_i]);
+                Individual child2 = crossover(old_population.individuals[p2_i], old_population.individuals[p1_i]);
+                pop.individuals[2*i] = child1;
+                pop.individuals[2*i + 1] = child2;
+            }
+            else
+            {
+                pop.individuals[2*i] = old_population.individuals[p1_i];
+                pop.individuals[2*i + 1] = old_population.individuals[p2_i];
+            }
         }
 
         // Mutar
@@ -81,14 +94,24 @@ void AGS::evaluate(Population &pop)
     min_fitness = pop.individuals[0].fitness();
     total_fitnesses = 0;
 
+    int best_i = 0;
+
     for(int i = 0; i < POPULATION_SIZE; ++i)
     {
         fitnesses[i] = pop.individuals[i].fitness();
 
         if(fitnesses[i] < min_fitness)
+        {
             min_fitness = fitnesses[i];
-
+            best_i = i;
+        }
         total_fitnesses += fitnesses[i];
+    }
+    if(min_fitness < best_fitness)
+    {
+        best_fitness = min_fitness;
+        best_individual = pop.individuals[best_i];
+        best_g = g;
     }
 }
 
@@ -150,10 +173,9 @@ void AGS::mutate(Population &pop)
 void AGS::show_generation(Population &pop)
 {
     move(0, 0);
+    printw("Generación: %d\n", g);
+    printw("Mejor adaptabilidad: %s = %f (generación %d)\n", best_individual.toString().c_str(), best_fitness, best_g);
     printw(pop.toString().c_str());
-    printw("Generacion: %i\n", g);
-    Individual best = pop.getFittest();
-    printw("Mejor adaptabilidad: %s = %f\n", best.toString().c_str(), best.fitness());
     refresh();
     usleep(SHOW_DELAY);
 }

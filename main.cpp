@@ -1,6 +1,5 @@
 #include "ags.h"
 #include "tester.h"
-#include <fstream>
 
 int main()
 {
@@ -11,14 +10,7 @@ int main()
     pop.randomize();
     ags.evolve(pop, true, true);
 
-    Individual fittest = pop.getFittest();
+    //Tester::run();
 
-    ofstream log;
-    log.open("log.txt", ios::out | ios::app);
-    log << "f" << fittest.toString() << " = "<< fittest.fitness() << endl;
-    log.close();
-/*
-    Tester::run();
-*/
     return 0;
 }

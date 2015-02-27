@@ -6,8 +6,9 @@
 
 #define TEST_ROULETE false
 #define TEST_INDIVIDUAL false
-#define TEST_CROSSOVER true
+#define TEST_CROSSOVER false
 #define TEST_EVALUATION false
+#define TEST_POPULATION_COPY true
 
 #define ROULETTE_TRIES 10000000
 #define CROSSOVER_TRIES 5
