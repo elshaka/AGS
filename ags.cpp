@@ -9,15 +9,14 @@ AGS::AGS()
     chiasma_dist = new uniform_int_distribution<int>(0, CHROMOSOME_SIZE);
     population_dist = new uniform_int_distribution<int>(0, POPULATION_SIZE - 1);
     mutation_dist = new bernoulli_distribution(MUTATION_RATE);
-    sum_best = 0;
-    sum_pop = 0;
 }
 
 void AGS::evolve(Population &pop, bool show, bool log)
 {
+    sum_best = 0;
+    sum_pop = 0;
     best_individual = pop.individuals[0];
     best_fitness = best_individual.fitness();
-    best_g = 1;
 
     if(show)
         initscr();
@@ -52,20 +51,20 @@ void AGS::evolve(Population &pop, bool show, bool log)
         int p2_i = select();
 
         // Cruzar
-        Population old_population = pop;
+        Population old_pop = pop;
         for(int i = 0; i < POPULATION_SIZE / 2; ++i)
         {
             if((*crossover_dist)(*random_gen))
             {
-                Individual child1 = crossover(old_population.individuals[p1_i], old_population.individuals[p2_i]);
-                Individual child2 = crossover(old_population.individuals[p2_i], old_population.individuals[p1_i]);
-                pop.individuals[2*i] = child1;
-                pop.individuals[2*i + 1] = child2;
+                Individual child1 = crossover(old_pop.individuals[p1_i], old_pop.individuals[p2_i]);
+                Individual child2 = crossover(old_pop.individuals[p2_i], old_pop.individuals[p1_i]);
+                pop.individuals[2 * i] = child1;
+                pop.individuals[2 * i + 1] = child2;
             }
             else
             {
-                pop.individuals[2*i] = old_population.individuals[p1_i];
-                pop.individuals[2*i + 1] = old_population.individuals[p2_i];
+                pop.individuals[2 * i] = old_pop.individuals[p1_i];
+                pop.individuals[2 * i + 1] = old_pop.individuals[p2_i];
             }
         }
 
@@ -75,7 +74,7 @@ void AGS::evolve(Population &pop, bool show, bool log)
 
     if(show)
     {
-        printw("Presione cualquier tecla para salir\n");
+        printw("Presione cualquier tecla para salir");
         getch();
         endwin();
     }
@@ -84,13 +83,25 @@ void AGS::evolve(Population &pop, bool show, bool log)
     {
         online_stream.close();
         offline_stream.close();
+        log_stream.open("log.txt", ios::out | ios::app);
+        log_stream << "Mejor adaptabilidad "
+                   << best_individual.toString()
+                   << " = "
+                   << best_fitness
+                   << endl
+                   << "\tParametros: CHROMOSOME_SIZE = "
+                   << CHROMOSOME_SIZE << ", POPULATION_SIZE = "
+                   << POPULATION_SIZE << ", GENERATIONS = "
+                   << GENERATIONS << ", CROSSOVER_RATE = "
+                   << CROSSOVER_RATE << ", MUTATION_RATE = "
+                   << MUTATION_RATE << endl;
+        log_stream.close();
     }
 
 }
 
 void AGS::evaluate(Population &pop)
 {
-    // Evaluar
     min_fitness = pop.individuals[0].fitness();
     total_fitnesses = 0;
 
@@ -111,13 +122,11 @@ void AGS::evaluate(Population &pop)
     {
         best_fitness = min_fitness;
         best_individual = pop.individuals[best_i];
-        best_g = g;
     }
 }
 
 void AGS::normalize()
 {
-    // Normalizar
     total_fitnesses = 0;
     double offset = min_fitness < 0 ? min_fitness : 0;
     for(int i = 0; i < POPULATION_SIZE; ++i)
@@ -173,8 +182,8 @@ void AGS::mutate(Population &pop)
 void AGS::show_generation(Population &pop)
 {
     move(0, 0);
-    printw("Generación: %d\n", g);
-    printw("Mejor adaptabilidad: %s = %f (generación %d)\n", best_individual.toString().c_str(), best_fitness, best_g);
+    printw("Generacion: %d\n", g);
+    printw("Mejor adaptabilidad: %s = %f\n", best_individual.toString().c_str(), best_fitness);
     printw(pop.toString().c_str());
     refresh();
     usleep(SHOW_DELAY);

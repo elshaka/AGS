@@ -15,20 +15,15 @@ class AGS
     friend class Tester;
 public:
     AGS();
-    void evolve(Population &pop, bool show = false, bool log = false);
-    double offline_performance[GENERATIONS];
-    double online_performance[GENERATIONS];
+    void evolve(Population &pop, bool show = true, bool log = true);
 private:
+    int g;
     double fitnesses[POPULATION_SIZE];
     double total_fitnesses;
     double min_fitness;
     double best_fitness;
     Individual best_individual;
-    int best_g;
     double chiasma;
-    double sum_best;
-    double sum_pop;
-    int g;
     void evaluate(Population &pop);
     void normalize();
     int select();
@@ -37,8 +32,14 @@ private:
     void show_generation(Population &pop);
     double average_best();
     double average_pop();
+
+    double sum_best;
+    double sum_pop;
+    double offline_performance[GENERATIONS];
+    double online_performance[GENERATIONS];
     ofstream offline_stream;
     ofstream online_stream;
+    ofstream log_stream;
 
     mt19937 *random_gen;
     uniform_real_distribution<double> *roulette_dist;

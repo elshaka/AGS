@@ -15,7 +15,8 @@ CXX           = g++
 DEFINES       = 
 CFLAGS        = -m64 -pipe -O2 -Wall -W -fPIE $(DEFINES)
 CXXFLAGS      = -m64 -pipe -O2 -std=c++0x -Wall -W -fPIE $(DEFINES)
-INCPATH       = -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I.
+#INCPATH       = -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I.
+INCPATH	      = -I.
 LINK          = g++
 LFLAGS        = -m64 -Wl,-O1
 LIBS          = $(SUBLIBS) -lncurses 
@@ -264,7 +265,7 @@ dist:
 clean:compiler_clean 
 	-$(DEL_FILE) $(OBJECTS)
 	-$(DEL_FILE) *~ core *.core
-
+	-$(DEL_FILE) $(TARGET)
 
 ####### Sub-libraries
 

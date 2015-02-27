@@ -3,6 +3,7 @@
 ## Los logs esos raros que me inventé
 *.dat
 *.png
+log.txt
 
 ### C++ ###
 # Compiled Object files
