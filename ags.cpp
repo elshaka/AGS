@@ -46,14 +46,15 @@ void AGS::evolve(Population &pop, bool show, bool log)
         // Normalizar
         normalize();
 
-        // Seleccionar
-        int p1_i = select();
-        int p2_i = select();
-
-        // Cruzar
+        // Seleccionar y cruzar
         Population old_pop = pop;
         for(int i = 0; i < POPULATION_SIZE / 2; ++i)
         {
+            // Seleccionar
+            int p1_i = select();
+            int p2_i = select();
+
+            // Cruzar
             if((*crossover_dist)(*random_gen))
             {
                 Individual child1 = crossover(old_pop.individuals[p1_i], old_pop.individuals[p2_i]);
