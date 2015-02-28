@@ -129,11 +129,11 @@ void AGS::evaluate(Population &pop)
 void AGS::normalize()
 {
     total_fitnesses = 0;
-    double offset = min_fitness <= 0 ? abs(min_fitness) + 1e-16 : 0;
+    double offset = min_fitness <= 0 ? abs(min_fitness) + DBL_MIN : 0;
     for(int i = 0; i < POPULATION_SIZE; ++i)
     {
         fitnesses[i] += offset;
-        fitnesses[i] = 1 / fitnesses[i];
+        fitnesses[i] = min_fitness / fitnesses[i];
         total_fitnesses += fitnesses[i];
     }
 }

@@ -3,7 +3,7 @@
 
 #define LB -5
 #define UB 5
-#define CHROMOSOME_SIZE 25
+#define CHROMOSOME_SIZE 24
 #define POPULATION_SIZE 50
 #define CROSSOVER_RATE 0.75
 #define MUTATION_RATE 0.01

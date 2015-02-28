@@ -4,9 +4,10 @@
 #include "parameters.h"
 #include "population.h"
 #include <random>
+#include <cfloat>
+#include <fstream>
 #include <ncurses.h>
 #include <unistd.h>
-#include <fstream>
 
 using namespace std;
 
