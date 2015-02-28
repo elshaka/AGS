@@ -118,6 +118,7 @@ void AGS::evaluate(Population &pop)
         }
         total_fitnesses += fitnesses[i];
     }
+
     if(min_fitness < best_fitness)
     {
         best_fitness = min_fitness;
@@ -128,16 +129,11 @@ void AGS::evaluate(Population &pop)
 void AGS::normalize()
 {
     total_fitnesses = 0;
-    double offset = min_fitness < 0 ? min_fitness : 0;
+    double offset = min_fitness <= 0 ? abs(min_fitness) + 1e-16 : 0;
     for(int i = 0; i < POPULATION_SIZE; ++i)
     {
-        fitnesses[i] -= offset;
-
-        if(fitnesses[i] == 0)
-            fitnesses[i] = 1;
-        else
-            fitnesses[i] = 1 / fitnesses[i];
-
+        fitnesses[i] += offset;
+        fitnesses[i] = 1 / fitnesses[i];
         total_fitnesses += fitnesses[i];
     }
 }
