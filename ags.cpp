@@ -15,6 +15,7 @@ void AGS::evolve(Population &pop, bool show, bool log)
 {
     sum_best = 0;
     sum_pop = 0;
+    best_g = 1;
     best_individual = pop.individuals[0];
     best_fitness = best_individual.fitness();
 
@@ -46,31 +47,45 @@ void AGS::evolve(Population &pop, bool show, bool log)
         // Normalizar
         normalize();
 
+        // Codificar gray
+        if(GRAY_ENABLED)
+            encodeGray(pop);
+
         // Seleccionar y cruzar
         Population old_pop = pop;
-        for(int i = 0; i < POPULATION_SIZE / 2; ++i)
+        for(int i = 0; i < POPULATION_SIZE - 1; i += 2)
         {
             // Seleccionar
-            int p1_i = select();
-            int p2_i = select();
+            int p1_i = selectTournament();
+            int p2_i = selectTournament();
 
             // Cruzar
             if((*crossover_dist)(*random_gen))
             {
-                Individual child1 = crossover(old_pop.individuals[p1_i], old_pop.individuals[p2_i]);
-                Individual child2 = crossover(old_pop.individuals[p2_i], old_pop.individuals[p1_i]);
-                pop.individuals[2 * i] = child1;
-                pop.individuals[2 * i + 1] = child2;
+                pop.individuals[i] = crossover(old_pop.individuals[p1_i], old_pop.individuals[p2_i]);
+                pop.individuals[i + 1] = crossover(old_pop.individuals[p2_i], old_pop.individuals[p1_i]);
             }
             else
             {
-                pop.individuals[2 * i] = old_pop.individuals[p1_i];
-                pop.individuals[2 * i + 1] = old_pop.individuals[p2_i];
+                pop.individuals[i] = old_pop.individuals[p1_i];
+                pop.individuals[i + 1] = old_pop.individuals[p2_i];
             }
         }
 
         // Mutar
         mutate(pop);
+
+        // Elitismo
+        if(ELITISM_ENABLED)
+        {
+            sort(indexedFitnesses.begin(), indexedFitnesses.end());
+            for(int i = 0; i < ELITISM_SIZE; ++i)
+                pop.individuals[i] = old_pop.individuals[indexedFitnesses[i].index];
+        }
+
+        // Decodificar gray
+        if(GRAY_ENABLED)
+            decodeGray(pop);
     }
 
     if(show)
@@ -103,14 +118,19 @@ void AGS::evolve(Population &pop, bool show, bool log)
 
 void AGS::evaluate(Population &pop)
 {
+    int best_i = 0;
     min_fitness = pop.individuals[0].fitness();
     total_fitnesses = 0;
 
-    int best_i = 0;
+    if(ELITISM_ENABLED)
+        indexedFitnesses.clear();
 
     for(int i = 0; i < POPULATION_SIZE; ++i)
     {
         fitnesses[i] = pop.individuals[i].fitness();
+
+        if(ELITISM_ENABLED)
+            indexedFitnesses.push_back(IndexedFitness(i, fitnesses[i]));
 
         if(fitnesses[i] < min_fitness)
         {
@@ -124,6 +144,7 @@ void AGS::evaluate(Population &pop)
     {
         best_fitness = min_fitness;
         best_individual = pop.individuals[best_i];
+        best_g = g;
     }
 }
 
@@ -139,7 +160,7 @@ void AGS::normalize()
     }
 }
 
-int AGS::select()
+int AGS::selectRoulette()
 {
     int i = -1;
     double sum = 0;
@@ -153,6 +174,25 @@ int AGS::select()
     return i;
 }
 
+int AGS::selectTournament()
+{
+    int k = (*population_dist)(*random_gen);
+    int winner_i = k;
+    double winnerFitness = fitnesses[k];
+
+    for(int i = 1; i < TOURNAMENT_SIZE; ++i)
+    {
+        k = (*population_dist)(*random_gen);
+        if(fitnesses[k] < winnerFitness)
+        {
+            winner_i = k;
+            winnerFitness = fitnesses[k];
+        }
+    }
+
+    return winner_i;
+}
+
 Individual AGS::crossover(Individual &parent1, Individual &parent2)
 {
     Individual child;
@@ -162,6 +202,7 @@ Individual AGS::crossover(Individual &parent1, Individual &parent2)
         child.chromosome[i] = parent1.chromosome[i];
     for(int i = chiasma; i < CHROMOSOME_SIZE; ++i)
         child.chromosome[i] = parent2.chromosome[i];
+
     return child;
 }
 
@@ -176,11 +217,35 @@ void AGS::mutate(Population &pop)
     }
 }
 
+void AGS::encodeGray(Population &pop)
+{
+    Individual *individual;
+    for(int i = 0; i < POPULATION_SIZE; ++i)
+    {
+        individual = &(pop.individuals[i]);
+        individual->chromosome ^= (individual->chromosome >> 1);
+    }
+}
+
+void AGS::decodeGray(Population &pop)
+{
+    Individual *individual;
+    unsigned long long value;
+    for(int i = 0; i < POPULATION_SIZE; ++i)
+    {
+        individual = &(pop.individuals[i]);
+        value = individual->chromosome.to_ullong();
+        for(unsigned long long mask = value >> 1; mask != 0; mask = mask >> 1)
+            value ^= mask;
+        individual->chromosome = value;
+    }
+}
+
 void AGS::show_generation(Population &pop)
 {
     move(0, 0);
     printw("Generacion: %d\n", g);
-    printw("Mejor adaptabilidad: %s = %f\n", best_individual.toString().c_str(), best_fitness);
+    printw("Mejor adaptabilidad (Generacion %d): %s = %f\n", best_g, best_individual.toString().c_str(), best_fitness);
     printw(pop.toString().c_str());
     refresh();
     usleep(SHOW_DELAY);

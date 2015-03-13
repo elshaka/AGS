@@ -6,6 +6,8 @@
 #include <random>
 #include <cfloat>
 #include <fstream>
+#include <vector>
+#include <algorithm>
 #include <ncurses.h>
 #include <unistd.h>
 
@@ -19,6 +21,7 @@ public:
     void evolve(Population &pop, bool show = true, bool log = true);
 private:
     int g;
+    int best_g;
     double fitnesses[POPULATION_SIZE];
     double total_fitnesses;
     double min_fitness;
@@ -27,9 +30,12 @@ private:
     double chiasma;
     void evaluate(Population &pop);
     void normalize();
-    int select();
+    int selectRoulette();
+    int selectTournament();
     Individual crossover(Individual &parent1, Individual &parent2);
     void mutate(Population &pop);
+    void encodeGray(Population &pop);
+    void decodeGray(Population &pop);
     void show_generation(Population &pop);
     double average_best();
     double average_pop();
@@ -48,6 +54,20 @@ private:
     uniform_int_distribution<int> *chiasma_dist;
     uniform_int_distribution<int> *population_dist;
     bernoulli_distribution *mutation_dist;
+
+    struct IndexedFitness
+    {
+        int index;
+        double fitness;
+
+        IndexedFitness(int i, double f) : index(i), fitness(f) {}
+
+        bool operator < (const IndexedFitness& indexedFitness) const
+        {
+            return (fitness < indexedFitness.fitness);
+        }
+    };
+    vector<IndexedFitness> indexedFitnesses;
 };
 
 #endif // AGS_H

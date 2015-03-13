@@ -24,7 +24,7 @@ void Tester::run()
         }
 
         for(int i = 0; i < ROULETTE_TRIES; ++i)
-            times_selected[ags.select()] += 1;
+            times_selected[ags.selectRoulette()] += 1;
 
         for(int i = 0; i < POPULATION_SIZE; ++i)
             cout << "Adaptabilidad: " << ags.fitnesses[i]  << ", Seleccion "<< (double) times_selected[i] / ROULETTE_TRIES * 100 << "% (" << ags.fitnesses[i] / ags.total_fitnesses * 100 << "%)\n";
