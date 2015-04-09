@@ -18,6 +18,7 @@ Individual Population::getFittest()
             best_i = i;
         }
     }
+
     return individuals[best_i];
 }
 

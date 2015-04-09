@@ -16,7 +16,7 @@ void AGS::evolve(Population &pop, bool show, bool log)
     sum_best = 0;
     sum_pop = 0;
     best_g = 1;
-    best_individual = pop.individuals[0];
+    best_individual = pop.getFittest();
     best_fitness = best_individual.fitness();
 
     if(show)
